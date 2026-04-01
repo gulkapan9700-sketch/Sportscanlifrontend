@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/sportscaninfrontend/static/css/main.05b2f1a1.css",
-    "main.js": "/sportscaninfrontend/static/js/main.2776ea3b.js",
-    "index.html": "/sportscaninfrontend/index.html",
-    "main.05b2f1a1.css.map": "/sportscaninfrontend/static/css/main.05b2f1a1.css.map",
-    "main.2776ea3b.js.map": "/sportscaninfrontend/static/js/main.2776ea3b.js.map"
+    "main.css": "/Sportscanlifrontend/static/css/main.05b2f1a1.css",
+    "main.js": "/Sportscanlifrontend/static/js/main.582c2f5a.js",
+    "index.html": "/Sportscanlifrontend/index.html",
+    "main.05b2f1a1.css.map": "/Sportscanlifrontend/static/css/main.05b2f1a1.css.map",
+    "main.582c2f5a.js.map": "/Sportscanlifrontend/static/js/main.582c2f5a.js.map"
   },
   "entrypoints": [
     "static/css/main.05b2f1a1.css",
-    "static/js/main.2776ea3b.js"
+    "static/js/main.582c2f5a.js"
   ]
 }
