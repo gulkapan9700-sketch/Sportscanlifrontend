@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import { getFootballLive, getFootballToday } from '../services/api';
@@ -30,18 +30,27 @@ function groupByLeague(fixtures) {
 export default function FootballPage() {
   const [tab, setTab] = useState('live');
 
+  // ✅ CANLI
   const liveQuery = useQuery({
     queryKey: ['football-live'],
     queryFn: getFootballLive,
-    refetchInterval: 30000,
     enabled: tab === 'live',
+    refetchInterval: (data) => {
+      const count = data?.response?.length || 0;
+      return count > 0 ? 15000 : 60000; // 🔥 AKILLI POLLING
+    },
+    refetchIntervalInBackground: false, // 🔥 ARKA PLANDA DUR
+    staleTime: 0,
   });
 
+  // ✅ BUGÜN
   const todayQuery = useQuery({
     queryKey: ['football-today'],
     queryFn: getFootballToday,
-    refetchInterval: 120000,
     enabled: tab === 'today',
+    refetchInterval: 120000, // 2 dk
+    refetchIntervalInBackground: false,
+    staleTime: 60000,
   });
 
   const activeQuery = tab === 'live' ? liveQuery : todayQuery;
@@ -59,12 +68,16 @@ export default function FootballPage() {
             <p className="page-header__sub">{fixtures.length} maç</p>
           </div>
         </div>
+
         <button
           className="refresh-btn"
           onClick={() => activeQuery.refetch()}
           disabled={activeQuery.isFetching}
         >
-          <RefreshCw size={14} className={activeQuery.isFetching ? 'spinning' : ''} />
+          <RefreshCw
+            size={14}
+            className={activeQuery.isFetching ? 'spinning' : ''}
+          />
           Yenile
         </button>
       </div>
@@ -87,33 +100,62 @@ export default function FootballPage() {
       {activeQuery.isLoading ? (
         <div className="match-list">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="skeleton" style={{ height: 68, borderRadius: 10 }} />
+            <div
+              key={i}
+              className="skeleton"
+              style={{ height: 68, borderRadius: 10 }}
+            />
           ))}
         </div>
       ) : groups.length === 0 ? (
         <div className="empty-state">
-          {tab === 'live' ? 'Şu an canlı maç yok.' : 'Bugün maç bulunamadı.'}
+          {tab === 'live'
+            ? 'Şu an canlı maç yok.'
+            : 'Bugün maç bulunamadı.'}
         </div>
       ) : (
         <div className="league-groups">
           {groups.map((group, gi) => (
-            <div key={gi} className="league-group fade-in-up" style={{ animationDelay: `${gi * 0.05}s` }}>
+            <div
+              key={gi}
+              className="league-group fade-in-up"
+              style={{ animationDelay: `${gi * 0.05}s` }}
+            >
               <div className="league-group__header">
                 {group.flag && (
-                  <img src={group.flag} alt={group.country} className="league-group__flag" />
+                  <img
+                    src={group.flag}
+                    alt={group.country}
+                    className="league-group__flag"
+                  />
                 )}
                 {group.league?.logo && (
-                  <img src={group.league.logo} alt={group.league.name} className="league-group__logo" />
+                  <img
+                    src={group.league.logo}
+                    alt={group.league.name}
+                    className="league-group__logo"
+                  />
                 )}
                 <div className="league-group__info">
-                  <span className="league-group__name">{group.league?.name}</span>
-                  <span className="league-group__country">{group.country}</span>
+                  <span className="league-group__name">
+                    {group.league?.name}
+                  </span>
+                  <span className="league-group__country">
+                    {group.country}
+                  </span>
                 </div>
-                <span className="league-group__count">{group.fixtures.length}</span>
+                <span className="league-group__count">
+                  {group.fixtures.length}
+                </span>
               </div>
+
               <div className="league-group__matches">
                 {group.fixtures.map((f, fi) => (
-                  <MatchCard key={f.fixture?.id || fi} fixture={f} sport="football" />
+                  <MatchCard
+                    key={f.fixture?.id || fi}
+                    fixture={f}
+                    sport="football"
+                  />
                 ))}
               </div>
             </div>
