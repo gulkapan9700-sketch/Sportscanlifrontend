@@ -33,8 +33,7 @@ export default function Layout() {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  const pad = n => String(n).padStart(2, '0');
-  const timeStr = `${pad(time.getHours())}:${pad(time.getMinutes())}:${pad(time.getSeconds())}`;
+  const timeStr = time.toLocaleTimeString('tr-TR', { hour12: false });
 
   return (
     <div className="layout">
@@ -74,7 +73,6 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* 🔴 BURASI HAYATİ */}
       <main className="main-content">
         <Outlet />
       </main>
@@ -85,4 +83,3 @@ export default function Layout() {
     </div>
   );
 }
-``
